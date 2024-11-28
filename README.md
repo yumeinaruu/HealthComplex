@@ -14,3 +14,8 @@ git clone https://github.com/yumeinaruu/HealthComplex
 docker compose up -d --build health-complex-db
 docker compose up -d --build health-complex
 ```
+
+## 3. Перейти на сайт
+```shell
+go to http://localhost:8080/swagger-ui/index.html#/
+```
