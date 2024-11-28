@@ -4,6 +4,7 @@ import com.project.healthcomplex.model.UService;
 import com.project.healthcomplex.model.Users;
 import com.project.healthcomplex.repository.UServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,4 +30,10 @@ public class UServiceService {
     public Optional<UService> getUServiceByName(String name) {
         return uServiceRepository.findByName(name);
     }
+
+    public List<UService> getUsersSortedByName() {
+        return uServiceRepository.findAll(Sort.by("name"));
+    }
+
+
 }
