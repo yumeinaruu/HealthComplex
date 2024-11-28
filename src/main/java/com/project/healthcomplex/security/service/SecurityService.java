@@ -29,13 +29,12 @@ public class SecurityService {
 
     @Autowired
     public SecurityService(SecurityRepository securityRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils,
-                           EmailService emailService, RandomPasswordGenerator randomPasswordGenerator) {
+                           EmailService emailService) {
         this.securityRepository = securityRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
         this.emailService = emailService;
-        this.randomPasswordGenerator = randomPasswordGenerator;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -52,14 +51,13 @@ public class SecurityService {
 
         Security userSecurity = new Security();
         userSecurity.setLogin(registrationDto.getLogin());
-        String password = randomPasswordGenerator.generatePassayPassword();
-        userSecurity.setPassword(passwordEncoder.encode(password));
+        userSecurity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         userSecurity.setRole(Roles.USER);
         userSecurity.setUserId(savedUser.getId());
         securityRepository.save(userSecurity);
         emailService.sendEmailNoAttachment(userSecurity.getLogin(), emailService.getCc(),
                 "Registration in tracker system", emailService.getRegistrationBody()
-                        + "\n Your login: " + registrationDto.getLogin() + "\n Your password: " + password +
+                        + "\n Your login: " + registrationDto.getLogin() + "\n Your password: " + registrationDto.getPassword() +
                         "\n Don't share to anyone this information");
     }
 
