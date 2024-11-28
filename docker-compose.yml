@@ -1,0 +1,40 @@
+version: '3.7'
+
+volumes:
+  db_data_volume:
+    name: db_data
+    external: false
+
+services:
+  health-complex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: health-complex
+    ports:
+      - "8080:8080"
+    depends_on:
+      - health-complex-db
+    env_file:
+      - .env
+    networks:
+      - health-complex-network
+
+  health-complex-db:
+    image: 'mysql:8'
+    container_name: health-complex-db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data_volume:/var/lib/mysql/
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: health_complex_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    networks:
+      - health-complex-network
+
+networks:
+  health-complex-network:
+    driver: bridge
