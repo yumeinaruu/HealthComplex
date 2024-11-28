@@ -13,6 +13,6 @@ public class AuthRequestDto {
     private String login;
 
     @NotNull
-    @Size(min = 6, max = 50)
+    @Size(min = 1, max = 50)
     private String password;
 }
