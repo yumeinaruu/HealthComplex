@@ -1,8 +1,7 @@
 ## 1. Клонировать репозиторий
 
-Непосредственно belrw-library:
 ```dtd
-git clone 
+git clone https://github.com/yumeinaruu/HealthComplex
 ```
 
 Создать в корневой папке файл **.env** на основе **.env-example** и заполнить 
