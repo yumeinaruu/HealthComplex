@@ -7,11 +7,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(info = @Info(
-        title = "Tracker system",
-        description = "For krainet trainee position",
-        contact = @Contact(name = "Lisavy Stanislau",
-                url = "https://github.com/yumeinaruu",
-                email = "stas.lisavoy@icloud.com")
+        title = "Health complex",
+        description = "Health complexn",
+        contact = @Contact(name = "Студент имя",
+                url = "https://github.com/",
+                email = "почта")
 ))
 @SpringBootApplication
 public class HealthComplexApplication {
