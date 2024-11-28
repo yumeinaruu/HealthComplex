@@ -20,6 +20,5 @@ public class RegistrationDto {
 
     @NotNull
     @Size(min = 1, max = 50)
-    @Email
     private String password;
 }
