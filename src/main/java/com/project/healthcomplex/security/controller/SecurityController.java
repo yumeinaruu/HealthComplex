@@ -30,8 +30,6 @@ public class SecurityController {
         this.securityService = securityService;
     }
 
-    //Чтобы не относящиеся к компании люди не могли зарегистрироваться в апи компании, всех регистрирует админ
-    //Первый пользователь, то бишь админ должен быть задан в бд
     @PostMapping("/registration")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
@@ -41,6 +39,42 @@ public class SecurityController {
             throw new CustomValidationException(bindingResult.getAllErrors().toString());
         }
         securityService.registration(registrationDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/registration")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    public ResponseEntity<HttpStatus> registrationForAdmin(@RequestBody @Valid RegistrationDto registrationDto,
+                                                   BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomValidationException(bindingResult.getAllErrors().toString());
+        }
+        securityService.registrationForAdmin(registrationDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/registration")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    public ResponseEntity<HttpStatus> registrationForCashier(@RequestBody @Valid RegistrationDto registrationDto,
+                                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomValidationException(bindingResult.getAllErrors().toString());
+        }
+        securityService.registrationForCashier(registrationDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/registration")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    public ResponseEntity<HttpStatus> registrationForCoach(@RequestBody @Valid RegistrationDto registrationDto,
+                                                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomValidationException(bindingResult.getAllErrors().toString());
+        }
+        securityService.registrationForCoach(registrationDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

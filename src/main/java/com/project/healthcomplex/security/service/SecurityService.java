@@ -56,9 +56,80 @@ public class SecurityService {
         userSecurity.setUserId(savedUser.getId());
         securityRepository.save(userSecurity);
         emailService.sendEmailNoAttachment(userSecurity.getLogin(), emailService.getCc(),
-                "Registration in tracker system", emailService.getRegistrationBody()
-                        + "\n Your login: " + registrationDto.getLogin() + "\n Your password: " + registrationDto.getPassword() +
-                        "\n Don't share to anyone this information");
+                "Регистрация в оздоровительном комплексе", emailService.getRegistrationBody()
+                        + "\n Благодарим за участие в нашем проекте!");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void registrationForAdmin(RegistrationDto registrationDto) {
+        Optional<Security> security = securityRepository.findByLogin(registrationDto.getLogin());
+        if (security.isPresent()) {
+            throw new SameUserInDatabase(registrationDto.getLogin());
+        }
+        Users user = new Users();
+        user.setName(registrationDto.getName());
+        user.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+        Users savedUser = userRepository.save(user);
+
+        Security userSecurity = new Security();
+        userSecurity.setLogin(registrationDto.getLogin());
+        userSecurity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        userSecurity.setRole(Roles.ADMIN);
+        userSecurity.setUserId(savedUser.getId());
+        securityRepository.save(userSecurity);
+        emailService.sendEmailNoAttachment(userSecurity.getLogin(), emailService.getCc(),
+                "Регистрация администратора в оздоровительном комплексе", emailService.getRegistrationBody()
+                        + "\n Ваш логин: " + registrationDto.getLogin() + "\n Ваш пароль: " + registrationDto.getPassword() +
+                        "\n Не делитесь ни с кем этой информацией");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void registrationForCoach(RegistrationDto registrationDto) {
+        Optional<Security> security = securityRepository.findByLogin(registrationDto.getLogin());
+        if (security.isPresent()) {
+            throw new SameUserInDatabase(registrationDto.getLogin());
+        }
+        Users user = new Users();
+        user.setName(registrationDto.getName());
+        user.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+        Users savedUser = userRepository.save(user);
+
+        Security userSecurity = new Security();
+        userSecurity.setLogin(registrationDto.getLogin());
+        userSecurity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        userSecurity.setRole(Roles.COACH);
+        userSecurity.setUserId(savedUser.getId());
+        securityRepository.save(userSecurity);
+        emailService.sendEmailNoAttachment(userSecurity.getLogin(), emailService.getCc(),
+                "Регистрация тренера в оздоровительном комплексе", emailService.getRegistrationBody()
+                        + "\n Ваш логин: " + registrationDto.getLogin() + "\n Ваш пароль: " + registrationDto.getPassword() +
+                        "\n Не делитесь ни с кем этой информацией");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void registrationForCashier(RegistrationDto registrationDto) {
+        Optional<Security> security = securityRepository.findByLogin(registrationDto.getLogin());
+        if (security.isPresent()) {
+            throw new SameUserInDatabase(registrationDto.getLogin());
+        }
+        Users user = new Users();
+        user.setName(registrationDto.getName());
+        user.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+        Users savedUser = userRepository.save(user);
+
+        Security userSecurity = new Security();
+        userSecurity.setLogin(registrationDto.getLogin());
+        userSecurity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        userSecurity.setRole(Roles.CASHIER);
+        userSecurity.setUserId(savedUser.getId());
+        securityRepository.save(userSecurity);
+        emailService.sendEmailNoAttachment(userSecurity.getLogin(), emailService.getCc(),
+                "Регистрация кассира в оздоровительном комплексе", emailService.getRegistrationBody()
+                        + "\n Ваш логин: " + registrationDto.getLogin() + "\n Ваш пароль: " + registrationDto.getPassword() +
+                        "\n Не делитесь ни с кем этой информацией");
     }
 
     public Optional<String> generateToken(AuthRequestDto authRequestDto) {
