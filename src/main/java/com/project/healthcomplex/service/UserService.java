@@ -11,6 +11,7 @@ import com.project.healthcomplex.repository.UServiceRepository;
 import com.project.healthcomplex.repository.UserRepository;
 import com.project.healthcomplex.security.model.Security;
 import com.project.healthcomplex.security.repository.SecurityRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
@@ -191,6 +192,7 @@ public class UserService {
         return false;
     }
 
+    @Transactional
     public Boolean unAssignServiceFromUser(Long userId, Long timeId) {
         Optional<Users> userOptional = userRepository.findById(userId);
         Optional<DateTimeModel> dateTimeOptional = dateTimeRepository.findById(timeId);
@@ -204,9 +206,11 @@ public class UserService {
 
             Users user = userOptional.get();
             user.getAssignedTimes().remove(dateTime);
+            user.getUServices().remove(dateTime.getUService());
 
             dateTime.setUser(null);
             dateTimeRepository.save(dateTime);
+            userRepository.save(user);
             return true;
         }
         return false;
@@ -221,6 +225,8 @@ public class UserService {
 
         user.getUServices().forEach(service -> service.getUsers().remove(user));
         user.getUServices().clear();
+        user.getAssignedTimes().forEach(time -> time.setUser(null));
+        user.getAssignedTimes().clear();
         userRepository.delete(user);
         return true;
     }
