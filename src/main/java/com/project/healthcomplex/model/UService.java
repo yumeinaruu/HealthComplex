@@ -41,6 +41,9 @@ public class UService {
     @JsonIgnore
     private Collection<Users> users;
 
+    @OneToMany(mappedBy = "uService", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<DateTimeModel> dateTimes;
+
     public void addUser(Users user) {
         this.users.add(user);
         user.getUServices().add(this);

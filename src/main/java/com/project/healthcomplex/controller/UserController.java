@@ -1,6 +1,7 @@
 package com.project.healthcomplex.controller;
 
 import com.project.healthcomplex.exception.custom.CustomValidationException;
+import com.project.healthcomplex.model.DateTimeModel;
 import com.project.healthcomplex.model.UService;
 import com.project.healthcomplex.model.Users;
 import com.project.healthcomplex.model.dto.AssignDto;
@@ -161,6 +162,38 @@ public class UserController {
         }
         return new ResponseEntity<>(userService.updateUser(userUpdateDto) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("/{userId}/assign")
+    public ResponseEntity<String> assignServiceWithTimeToUser(
+            @PathVariable Long userId,
+            @RequestParam Long serviceId,
+            @RequestParam Long timeId
+    ) {
+        if (userService.assignServiceWithTimeToUser(userId, serviceId, timeId)) {
+            return ResponseEntity.ok("Service and time assigned to user successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to assign service and time to user");
+    }
+
+    @DeleteMapping("/{userId}/unassign")
+    public ResponseEntity<String> unAssignServiceFromUser(
+            @PathVariable Long userId,
+            @RequestParam Long timeId
+    ) {
+        if (userService.unAssignServiceFromUser(userId, timeId)) {
+            return ResponseEntity.ok("Service and time unassigned from user successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to unassign service and time from user");
+    }
+
+//    @GetMapping("/{userId}/times")
+//    public ResponseEntity<?> getUserAssignedTimes(@PathVariable Long userId) {
+//        List<DateTimeModel> times = userService.getUserAssignedTimes(userId);
+//        if (times.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No times assigned to user");
+//        }
+//        return ResponseEntity.ok(times);
+//    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")

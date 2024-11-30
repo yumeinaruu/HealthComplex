@@ -1,10 +1,12 @@
 package com.project.healthcomplex.service;
 
+import com.project.healthcomplex.model.DateTimeModel;
 import com.project.healthcomplex.model.UService;
 import com.project.healthcomplex.model.Users;
 import com.project.healthcomplex.model.dto.AssignDto;
 import com.project.healthcomplex.model.dto.users.UserCreateDto;
 import com.project.healthcomplex.model.dto.users.UserUpdateDto;
+import com.project.healthcomplex.repository.DateTimeRepository;
 import com.project.healthcomplex.repository.UServiceRepository;
 import com.project.healthcomplex.repository.UserRepository;
 import com.project.healthcomplex.security.model.Security;
@@ -22,18 +24,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final SecurityRepository securityRepository;
     private final UServiceRepository uServiceRepository;
+    private final DateTimeRepository dateTimeRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, SecurityRepository securityRepository, UServiceRepository uServiceRepository) {
+    public UserService(UserRepository userRepository, SecurityRepository securityRepository, UServiceRepository uServiceRepository,
+                       DateTimeRepository dateTimeRepository) {
         this.userRepository = userRepository;
         this.securityRepository = securityRepository;
         this.uServiceRepository = uServiceRepository;
+        this.dateTimeRepository = dateTimeRepository;
     }
 
     public List<Users> getAllUsers() {
@@ -160,6 +166,50 @@ public class UserService {
             return userOptional.get().getUServices();
         }
         return Collections.emptyList();
+    }
+
+
+    public Boolean assignServiceWithTimeToUser(Long userId, Long serviceId, Long timeId) {
+        Optional<Users> userOptional = userRepository.findById(userId);
+        Optional<DateTimeModel> dateTimeOptional = dateTimeRepository.findById(timeId);
+
+        if (userOptional.isPresent() && dateTimeOptional.isPresent()) {
+            DateTimeModel dateTime = dateTimeOptional.get();
+
+            if (!dateTime.getUService().getId().equals(serviceId)) {
+                return false;
+            }
+
+            Users user = userOptional.get();
+            dateTime.setUser(user);
+            user.getAssignedTimes().add(dateTime);
+            user.getUServices().add(dateTime.getUService());
+
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean unAssignServiceFromUser(Long userId, Long timeId) {
+        Optional<Users> userOptional = userRepository.findById(userId);
+        Optional<DateTimeModel> dateTimeOptional = dateTimeRepository.findById(timeId);
+
+        if (userOptional.isPresent() && dateTimeOptional.isPresent()) {
+            DateTimeModel dateTime = dateTimeOptional.get();
+
+            if (!dateTime.getUser().getId().equals(userId)) {
+                return false;
+            }
+
+            Users user = userOptional.get();
+            user.getAssignedTimes().remove(dateTime);
+
+            dateTime.setUser(null);
+            dateTimeRepository.save(dateTime);
+            return true;
+        }
+        return false;
     }
 
     public Boolean deleteUserById(Long id) {

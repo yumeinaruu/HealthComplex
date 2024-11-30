@@ -16,4 +16,7 @@ public class AssignDto {
 
     @NotNull
     private Long service_id;
+
+    @NotNull
+    private Long timeId;
 }

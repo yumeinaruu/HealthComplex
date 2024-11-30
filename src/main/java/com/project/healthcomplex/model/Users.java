@@ -30,6 +30,9 @@ public class Users {
     @ManyToMany
     private Collection<UService> uServices;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<DateTimeModel> assignedTimes;
+
     public void addUService(UService uService) {
         this.uServices.add(uService);
         uService.getUsers().add(this);

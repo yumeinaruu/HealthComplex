@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,6 +101,17 @@ public class UServiceController {
             throw new CustomValidationException(bindingResult.getAllErrors().toString());
         }
         return new ResponseEntity<>(uServiceService.updateUService(uServiceUpdateDto) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/{serviceId}/times")
+    public ResponseEntity<String> addTimeToService(
+            @PathVariable Long serviceId,
+            @RequestParam("startTime") Timestamp startTime
+    ) {
+        if (uServiceService.addTimeToService(serviceId, startTime)) {
+            return ResponseEntity.ok("Time added to service successfully");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Service not found");
     }
 
     @DeleteMapping("/{id}")

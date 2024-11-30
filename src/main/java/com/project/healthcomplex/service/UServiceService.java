@@ -1,5 +1,6 @@
 package com.project.healthcomplex.service;
 
+import com.project.healthcomplex.model.DateTimeModel;
 import com.project.healthcomplex.model.UService;
 import com.project.healthcomplex.model.dto.uservice.UServiceCreateDto;
 import com.project.healthcomplex.model.dto.uservice.UServiceUpdateDto;
@@ -62,6 +63,23 @@ public class UServiceService {
             uService.setChanged(Timestamp.valueOf(LocalDateTime.now()));
             UService savedUService = uServiceRepository.saveAndFlush(uService);
             return savedUService.equals(uService);
+        }
+        return false;
+    }
+
+    public Boolean addTimeToService(Long serviceId, Timestamp startTime) {
+        Optional<UService> serviceOptional = uServiceRepository.findById(serviceId);
+        if (serviceOptional.isPresent()) {
+            UService service = serviceOptional.get();
+
+            DateTimeModel dateTime = new DateTimeModel();
+            dateTime.setStart(startTime);
+            dateTime.setUService(service);
+
+            service.getDateTimes().add(dateTime);
+            uServiceRepository.save(service);
+
+            return true;
         }
         return false;
     }
