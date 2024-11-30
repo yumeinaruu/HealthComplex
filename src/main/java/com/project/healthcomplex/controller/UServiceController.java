@@ -116,6 +116,19 @@ public class UServiceController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Service not found");
     }
 
+    @PostMapping("/times/name")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
+    @Operation(summary = "Назначить время на услугу(формат 2024-12-31 12:00:00) по имени услуги")
+    public ResponseEntity<String> addTimeToServiceWithName(
+            @RequestParam("service") String service,
+            @RequestParam("startTime") Timestamp startTime
+    ) {
+        if (uServiceService.addTimeToServiceByName(service, startTime)) {
+            return ResponseEntity.ok("Time added to service successfully");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Service not found");
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
     @Operation(summary = "Удалить услугу")

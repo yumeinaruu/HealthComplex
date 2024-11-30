@@ -84,6 +84,23 @@ public class UServiceService {
         return false;
     }
 
+    public Boolean addTimeToServiceByName(String serviceName, Timestamp startTime) {
+        Optional<UService> serviceOptional = uServiceRepository.findByName(serviceName);
+        if (serviceOptional.isPresent()) {
+            UService service = serviceOptional.get();
+
+            DateTimeModel dateTime = new DateTimeModel();
+            dateTime.setStart(startTime);
+            dateTime.setUService(service);
+
+            service.getDateTimes().add(dateTime);
+            uServiceRepository.save(service);
+
+            return true;
+        }
+        return false;
+    }
+
     public Boolean deleteUServiceById(Long id) {
         Optional<UService> uServiceOptional = uServiceRepository.findById(id);
         if (uServiceOptional.isEmpty()) {

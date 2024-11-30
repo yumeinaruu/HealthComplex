@@ -106,6 +106,35 @@ public class UserService {
         return false;
     }
 
+    public Boolean assignServiceToCurrentUserByName(String username, String service, Timestamp time) {
+
+        Optional<Security> security = securityRepository.findByLogin(username);
+        if (security.isEmpty()) {
+            return false;
+        }
+        Optional<Users> userOptional = userRepository.findById(security.get().getUserId());
+        Optional<DateTimeModel> dateTimeOptional = dateTimeRepository.findByStart(time);
+        Optional<UService> serviceOptional = uServiceRepository.findByName(service);
+
+        if (userOptional.isPresent() && dateTimeOptional.isPresent() && serviceOptional.isPresent()) {
+            DateTimeModel dateTime = dateTimeOptional.get();
+
+            if (!dateTime.getUService().equals(serviceOptional.get())) {
+                return false;
+            }
+
+            Users user = userOptional.get();
+            dateTime.setUser(user);
+            user.getAssignedTimes().add(dateTime);
+            user.getUServices().add(dateTime.getUService());
+
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+
     public Collection<UService> getServicesByUserId(Long userId) {
         Optional<Users> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {

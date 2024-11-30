@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -125,6 +126,18 @@ public class UserController {
     public ResponseEntity<String> assignServiceToCurrentUser(Principal principal, @RequestParam Long serviceId,
                                                              @RequestParam Long timeId) {
         Boolean result = userService.assignServiceToCurrentUser(principal.getName(), serviceId, timeId);
+        if (result) {
+            return ResponseEntity.ok("Услуга успешно назначена текущему пользователю.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при назначении услуги.");
+    }
+
+    @PostMapping("/services/assign/name")
+    @PreAuthorize("hasAnyRole('USER')")
+    @Operation(summary = "Подписаться на услугу(по имени услуги и дате, формат даты 2024-12-31 12:00:00)")
+    public ResponseEntity<String> assignServiceToCurrentUserByName(Principal principal, @RequestParam String service,
+                                                             @RequestParam Timestamp time) {
+        Boolean result = userService.assignServiceToCurrentUserByName(principal.getName(), service, time);
         if (result) {
             return ResponseEntity.ok("Услуга успешно назначена текущему пользователю.");
         }
