@@ -7,9 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(info = @Info(
-        title = "Health complex",
-        description = "Health complexn",
-        contact = @Contact(name = "Студент имя",
+        title = "Оздоровительный комплекс",
+        description = "Приложение для автоматизации работы оздоровительного комплекса",
+        contact = @Contact(name = "Имя студента",
                 url = "https://github.com/",
                 email = "почта")
 ))
