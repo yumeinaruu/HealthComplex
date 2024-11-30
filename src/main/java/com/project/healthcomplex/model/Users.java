@@ -1,5 +1,6 @@
 package com.project.healthcomplex.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -27,9 +28,15 @@ public class Users {
     private Timestamp changed;
 
     @ManyToMany
-    @JoinTable(
-            name = "user_service",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id"))
     private Collection<UService> uServices;
+
+    public void addUService(UService uService) {
+        this.uServices.add(uService);
+        uService.getUsers().add(this);
+    }
+
+    public void removeUService(UService uService) {
+        this.uServices.remove(uService);
+        uService.getUsers().remove(this);
+    }
 }

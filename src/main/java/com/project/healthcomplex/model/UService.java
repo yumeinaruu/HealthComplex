@@ -1,5 +1,6 @@
 package com.project.healthcomplex.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -37,5 +38,16 @@ public class UService {
     private Timestamp changed;
 
     @ManyToMany
+    @JsonIgnore
     private Collection<Users> users;
+
+    public void addUser(Users user) {
+        this.users.add(user);
+        user.getUServices().add(this);
+    }
+
+    public void removeUser(Users user) {
+        this.users.remove(user);
+        user.getUServices().remove(this);
+    }
 }

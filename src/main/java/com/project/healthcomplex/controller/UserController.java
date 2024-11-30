@@ -1,7 +1,9 @@
 package com.project.healthcomplex.controller;
 
 import com.project.healthcomplex.exception.custom.CustomValidationException;
+import com.project.healthcomplex.model.UService;
 import com.project.healthcomplex.model.Users;
+import com.project.healthcomplex.model.dto.AssignDto;
 import com.project.healthcomplex.model.dto.FindByNameDto;
 import com.project.healthcomplex.model.dto.users.UserCreateDto;
 import com.project.healthcomplex.model.dto.users.UserUpdateDto;
@@ -18,6 +20,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +59,24 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{userId}/services")
+    public ResponseEntity<Collection<UService>> getUserServices(@PathVariable Long userId) {
+        Collection<UService> services = userService.getServicesByUserId(userId);
+        if (!services.isEmpty()) {
+            return ResponseEntity.ok(services);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+    }
+
+    @GetMapping("/services")
+    public ResponseEntity<Collection<UService>> getCurrentUserServices() {
+        Collection<UService> services = userService.getServicesOfCurrentUser();
+        if (!services.isEmpty()) {
+            return ResponseEntity.ok(services);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+    }
+
     @PostMapping("/name")
     @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
     @Operation(summary = "Gives info about user by name")
@@ -90,6 +112,35 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(result.get(), HttpStatus.OK);
+    }
+
+    @PostMapping("/services/assign")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<String> assignServiceToCurrentUser(@RequestParam Long serviceId) {
+        Boolean result = userService.assignServiceToCurrentUser(serviceId);
+        if (result) {
+            return ResponseEntity.ok("Услуга успешно назначена текущему пользователю.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при назначении услуги.");
+    }
+
+    @PostMapping("/services/assign-to")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<String> assignServiceToUser(@RequestBody AssignDto assignDto) {
+        Boolean result = userService.assignUService(assignDto);
+        if (result) {
+            return ResponseEntity.ok("Услуга успешно назначена текущему пользователю.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при назначении услуги.");
+    }
+
+    @PostMapping("/services/unassign")
+    public ResponseEntity<String> unassignServiceFromUser(@RequestBody AssignDto assignDto) {
+        Boolean result = userService.unAssignUService(assignDto);
+        if (result) {
+            return ResponseEntity.ok("Услуга успешно удалена у пользователя.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при удалении услуги.");
     }
 
     @PostMapping

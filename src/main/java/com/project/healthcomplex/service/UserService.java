@@ -1,18 +1,25 @@
 package com.project.healthcomplex.service;
 
+import com.project.healthcomplex.model.UService;
 import com.project.healthcomplex.model.Users;
+import com.project.healthcomplex.model.dto.AssignDto;
 import com.project.healthcomplex.model.dto.users.UserCreateDto;
 import com.project.healthcomplex.model.dto.users.UserUpdateDto;
+import com.project.healthcomplex.repository.UServiceRepository;
 import com.project.healthcomplex.repository.UserRepository;
 import com.project.healthcomplex.security.model.Security;
 import com.project.healthcomplex.security.repository.SecurityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,11 +27,13 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final SecurityRepository securityRepository;
+    private final UServiceRepository uServiceRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, SecurityRepository securityRepository) {
+    public UserService(UserRepository userRepository, SecurityRepository securityRepository, UServiceRepository uServiceRepository) {
         this.userRepository = userRepository;
         this.securityRepository = securityRepository;
+        this.uServiceRepository = uServiceRepository;
     }
 
     public List<Users> getAllUsers() {
@@ -70,6 +79,87 @@ public class UserService {
             return savedUser.equals(user);
         }
         return false;
+    }
+
+    public Boolean assignUService(AssignDto assignDto) {
+        Optional<UService> uServiceOptional = uServiceRepository.findById(assignDto.getService_id());
+        Optional<Users> usersOptional = userRepository.findById(assignDto.getUser_id());
+
+        if (usersOptional.isPresent() && uServiceOptional.isPresent()) {
+            Users user = usersOptional.get();
+            UService uService = uServiceOptional.get();
+
+            user.addUService(uService);
+
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Boolean unAssignUService(AssignDto assignDto) {
+        Optional<UService> uServiceOptional = uServiceRepository.findById(assignDto.getService_id());
+        Optional<Users> usersOptional = userRepository.findById(assignDto.getUser_id());
+
+        if (usersOptional.isPresent() && uServiceOptional.isPresent()) {
+            Users user = usersOptional.get();
+            UService uService = uServiceOptional.get();
+
+            user.removeUService(uService);
+
+            userRepository.save(user);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public Boolean assignServiceToCurrentUser(Long serviceId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        Optional<Users> userOptional = userRepository.findByName(username);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+
+        Optional<UService> uServiceOptional = uServiceRepository.findById(serviceId);
+        if (uServiceOptional.isEmpty()) {
+            return false;
+        }
+
+        Users user = userOptional.get();
+        UService uService = uServiceOptional.get();
+
+        user.addUService(uService);
+
+        userRepository.save(user);
+        return true;
+    }
+
+    public Collection<UService> getServicesByUserId(Long userId) {
+        Optional<Users> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            return userOptional.get().getUServices();
+        }
+        return Collections.emptyList();
+    }
+
+    public Collection<UService> getServicesOfCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> userOptional = getInfoAboutCurrentUser(username);
+        if (userOptional.isPresent()) {
+            return userOptional.get().getUServices();
+        }
+        return Collections.emptyList();
     }
 
     public Boolean deleteUserById(Long id) {
