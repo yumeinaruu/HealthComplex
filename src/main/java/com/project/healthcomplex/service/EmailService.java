@@ -14,7 +14,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    private String[] cc = {"stas.lisavoy@icloud.com"};
+    private String[] cc = {"lisavystanislau@gmail.com"};
     private final String registrationBody = "Ваш аккаунт успешно зарегистрирован!";
     private final JavaMailSender mailSender;
 
