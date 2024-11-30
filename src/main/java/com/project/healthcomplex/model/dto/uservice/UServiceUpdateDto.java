@@ -13,7 +13,10 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UServiceCreateDto {
+public class UServiceUpdateDto {
+    @NotNull
+    private Long id;
+
     @NotNull
     @Size(min = 2, max = 100)
     private String name;
