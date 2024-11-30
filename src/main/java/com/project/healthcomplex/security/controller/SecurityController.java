@@ -33,7 +33,7 @@ public class SecurityController {
     //Чтобы не относящиеся к компании люди не могли зарегистрироваться в апи компании, всех регистрирует админ
     //Первый пользователь, то бишь админ должен быть задан в бд
     @PostMapping("/registration")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid RegistrationDto registrationDto,
                                                    BindingResult bindingResult) {
@@ -59,14 +59,14 @@ public class SecurityController {
     }
 
     @PutMapping("/give-admin/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Give admin role to someone")
     public ResponseEntity<HttpStatus> giveAdmin(@PathVariable Long id) {
         return new ResponseEntity<>(securityService.giveAdmin(id) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/downgrade-admin/{id}")
-    @PreAuthorize("hasAnyRole('SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Downgrade admin")
     public ResponseEntity<HttpStatus> downgradeAdmin(@PathVariable Long id) {
         return new ResponseEntity<>(securityService.downgradeAdmin(id) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);

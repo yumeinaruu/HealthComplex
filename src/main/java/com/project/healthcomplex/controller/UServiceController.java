@@ -33,7 +33,7 @@ public class UServiceController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about all services")
     public ResponseEntity<List<UService>> getAllUServices() {
         List<UService> uServices = uServiceService.getAllUServices();
@@ -44,7 +44,7 @@ public class UServiceController {
     }
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about service by id")
     public ResponseEntity<UService> getUServiceById(@PathVariable Long id) {
         Optional<UService> uService = uServiceService.getUServiceById(id);
@@ -55,7 +55,7 @@ public class UServiceController {
     }
 
     @PostMapping("/name")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about service by name")
     public ResponseEntity<UService> getUServiceByName(@RequestBody @Valid FindByNameDto findByNameDto,
                                                BindingResult bindingResult) {
@@ -70,7 +70,7 @@ public class UServiceController {
     }
 
     @GetMapping("/name-sort")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about all services sorted by name")
     public ResponseEntity<List<UService>> getUServicesSortedByName() {
         List<UService> uServices = uServiceService.getUServicesSortedByName();
@@ -81,7 +81,7 @@ public class UServiceController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
     @Operation(summary = "Create service")
     public ResponseEntity<HttpStatus> createUService(@RequestBody @Valid UServiceCreateDto uServiceCreateDto,
                                                  BindingResult bindingResult) {
@@ -92,7 +92,7 @@ public class UServiceController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
     @Operation(summary = "Update service")
     public ResponseEntity<HttpStatus> updateUService(@RequestBody @Valid UServiceUpdateDto uServiceUpdateDto,
                                                  BindingResult bindingResult) {
@@ -103,7 +103,7 @@ public class UServiceController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
     @Operation(summary = "Delete service")
     public ResponseEntity<HttpStatus> deleteUService(@PathVariable Long id) {
         return new ResponseEntity<>(uServiceService.deleteUServiceById(id) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);

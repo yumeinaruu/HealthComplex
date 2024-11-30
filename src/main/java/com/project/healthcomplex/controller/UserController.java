@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about all users")
     public ResponseEntity<List<Users>> getAllUsers() {
         List<Users> users = userService.getAllUsers();
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about user by id")
     public ResponseEntity<Users> getUserById(@PathVariable Long id) {
         Optional<Users> user = userService.getUserById(id);
@@ -60,6 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/services")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     public ResponseEntity<Collection<UService>> getUserServices(@PathVariable Long userId) {
         Collection<UService> services = userService.getServicesByUserId(userId);
         if (!services.isEmpty()) {
@@ -69,6 +70,7 @@ public class UserController {
     }
 
     @GetMapping("/services")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     public ResponseEntity<Collection<UService>> getCurrentUserServices() {
         Collection<UService> services = userService.getServicesOfCurrentUser();
         if (!services.isEmpty()) {
@@ -78,7 +80,7 @@ public class UserController {
     }
 
     @PostMapping("/name")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about user by name")
     public ResponseEntity<Users> getUserByName(@RequestBody @Valid FindByNameDto findByNameDto,
                                               BindingResult bindingResult) {
@@ -93,7 +95,7 @@ public class UserController {
     }
 
     @GetMapping("/name-sort")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about all users sorted by name")
     public ResponseEntity<List<Users>> getUsersSortedByName() {
         List<Users> users = userService.getUsersSortedByName();
@@ -104,7 +106,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Gives info about current logged user")
     public ResponseEntity<Users> getCurrentUser(Principal principal) {
         Optional<Users> result = userService.getInfoAboutCurrentUser(principal.getName());
@@ -115,7 +117,7 @@ public class UserController {
     }
 
     @PostMapping("/services/assign")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     public ResponseEntity<String> assignServiceToCurrentUser(@RequestParam Long serviceId) {
         Boolean result = userService.assignServiceToCurrentUser(serviceId);
         if (result) {
@@ -125,7 +127,7 @@ public class UserController {
     }
 
     @PostMapping("/services/assign-to")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
     public ResponseEntity<String> assignServiceToUser(@RequestBody AssignDto assignDto) {
         Boolean result = userService.assignUService(assignDto);
         if (result) {
@@ -135,6 +137,7 @@ public class UserController {
     }
 
     @PostMapping("/services/unassign")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
     public ResponseEntity<String> unassignServiceFromUser(@RequestBody AssignDto assignDto) {
         Boolean result = userService.unAssignUService(assignDto);
         if (result) {
@@ -144,7 +147,7 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Create user")
     public ResponseEntity<HttpStatus> createUser(@RequestBody @Valid UserCreateDto userCreateDto,
                                                  BindingResult bindingResult) {
@@ -155,7 +158,7 @@ public class UserController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Update user")
     public ResponseEntity<HttpStatus> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto,
                                                  BindingResult bindingResult) {
@@ -166,7 +169,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Delete user")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
         return new ResponseEntity<>(userService.deleteUserById(id) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
