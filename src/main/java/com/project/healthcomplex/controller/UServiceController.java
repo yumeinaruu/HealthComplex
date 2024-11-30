@@ -104,6 +104,8 @@ public class UServiceController {
     }
 
     @PostMapping("/{serviceId}/times")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
+    @Operation(summary = "Назначить время на услугу(формат 2024-12-31 12:00:00)")
     public ResponseEntity<String> addTimeToService(
             @PathVariable Long serviceId,
             @RequestParam("startTime") Timestamp startTime
