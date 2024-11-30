@@ -32,7 +32,7 @@ public class SecurityController {
 
     @PostMapping("/registration")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    @Operation(summary = "Регистация пользователя")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid RegistrationDto registrationDto,
                                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -44,7 +44,7 @@ public class SecurityController {
 
     @PostMapping("/registration/admin")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    @Operation(summary = "Регистация админа")
     public ResponseEntity<HttpStatus> registrationForAdmin(@RequestBody @Valid RegistrationDto registrationDto,
                                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -56,7 +56,7 @@ public class SecurityController {
 
     @PostMapping("/registration/cashier")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    @Operation(summary = "Регистация кассира")
     public ResponseEntity<HttpStatus> registrationForCashier(@RequestBody @Valid RegistrationDto registrationDto,
                                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -68,7 +68,7 @@ public class SecurityController {
 
     @PostMapping("/registration/coach")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
+    @Operation(summary = "Регистация тренера")
     public ResponseEntity<HttpStatus> registrationForCoach(@RequestBody @Valid RegistrationDto registrationDto,
                                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -79,7 +79,7 @@ public class SecurityController {
     }
 
     @PostMapping("/token")
-    @Operation(summary = "Generate token")
+    @Operation(summary = "Создание токена")
     public ResponseEntity<AuthResponseDto> generateToken(@RequestBody @Valid AuthRequestDto authRequest,
                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -94,14 +94,14 @@ public class SecurityController {
 
     @PutMapping("/give-admin/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Give admin role to someone")
+    @Operation(summary = "Повышение до админа")
     public ResponseEntity<HttpStatus> giveAdmin(@PathVariable Long id) {
         return new ResponseEntity<>(securityService.giveAdmin(id) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/downgrade-admin/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Downgrade admin")
+    @Operation(summary = "Понижение до пользователя")
     public ResponseEntity<HttpStatus> downgradeAdmin(@PathVariable Long id) {
         return new ResponseEntity<>(securityService.downgradeAdmin(id) ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
     }
