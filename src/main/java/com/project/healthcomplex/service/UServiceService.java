@@ -73,11 +73,9 @@ public class UServiceService {
         }
         UService uService = uServiceOptional.get();
 
-        // Удаляем связи с пользователями
         uService.getUsers().forEach(user -> user.getUServices().remove(uService));
         uService.getUsers().clear();
 
-        // Удаляем сам сервис
         uServiceRepository.delete(uService);
         return true;
     }
