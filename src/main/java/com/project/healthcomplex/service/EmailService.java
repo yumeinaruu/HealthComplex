@@ -15,7 +15,7 @@ public class EmailService {
     private String fromEmail;
 
     private String[] cc = {"stas.lisavoy@icloud.com"};
-    private final String registrationBody = "You have successfully registered your account!";
+    private final String registrationBody = "Ваш аккаунт успешно зарегистрирован!";
     private final JavaMailSender mailSender;
 
     @Autowired
