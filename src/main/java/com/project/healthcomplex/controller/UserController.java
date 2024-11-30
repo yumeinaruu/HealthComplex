@@ -86,7 +86,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Получить пользователя по имени")
     public ResponseEntity<Users> getUserByName(@RequestBody @Valid FindByNameDto findByNameDto,
-                                              BindingResult bindingResult) {
+                                               BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new CustomValidationException(bindingResult.getAllErrors().toString());
         }
@@ -120,36 +120,15 @@ public class UserController {
     }
 
     @PostMapping("/services/assign")
-    @PreAuthorize("hasAnyRole('USER' ,'ADMIN', 'COACH', 'CASHIER')")
+    @PreAuthorize("hasAnyRole('USER')")
     @Operation(summary = "Подписаться на услугу")
-    public ResponseEntity<String> assignServiceToCurrentUser(@RequestParam Long serviceId) {
-        Boolean result = userService.assignServiceToCurrentUser(serviceId);
+    public ResponseEntity<String> assignServiceToCurrentUser(Principal principal, @RequestParam Long serviceId,
+                                                             @RequestParam Long timeId) {
+        Boolean result = userService.assignServiceToCurrentUser(principal.getName(), serviceId, timeId);
         if (result) {
             return ResponseEntity.ok("Услуга успешно назначена текущему пользователю.");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при назначении услуги.");
-    }
-
-    @PostMapping("/services/assign-to")
-    @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
-    @Operation(summary = "Подписать пользователя на услугу")
-    public ResponseEntity<String> assignServiceToUser(@RequestBody AssignDto assignDto) {
-        Boolean result = userService.assignUService(assignDto);
-        if (result) {
-            return ResponseEntity.ok("Услуга успешно назначена текущему пользователю.");
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при назначении услуги.");
-    }
-
-    @PostMapping("/services/unassign")
-    @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
-    @Operation(summary = "Отписать пользователя от услуги")
-    public ResponseEntity<String> unassignServiceFromUser(@RequestBody AssignDto assignDto) {
-        Boolean result = userService.unAssignUService(assignDto);
-        if (result) {
-            return ResponseEntity.ok("Услуга успешно удалена у пользователя.");
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка при удалении услуги.");
     }
 
     @PutMapping
@@ -164,6 +143,8 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/assign")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
+    @Operation(summary = "Подписать пользователя на услугу")
     public ResponseEntity<String> assignServiceWithTimeToUser(
             @PathVariable Long userId,
             @RequestParam Long serviceId,
@@ -176,6 +157,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/unassign")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
+    @Operation(summary = "Отписать пользователя от услуги")
     public ResponseEntity<String> unAssignServiceFromUser(
             @PathVariable Long userId,
             @RequestParam Long timeId
@@ -185,15 +168,6 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to unassign service and time from user");
     }
-
-//    @GetMapping("/{userId}/times")
-//    public ResponseEntity<?> getUserAssignedTimes(@PathVariable Long userId) {
-//        List<DateTimeModel> times = userService.getUserAssignedTimes(userId);
-//        if (times.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No times assigned to user");
-//        }
-//        return ResponseEntity.ok(times);
-//    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")

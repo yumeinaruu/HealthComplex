@@ -67,15 +67,6 @@ public class UserService {
         return userRepository.findAll(Sort.by("name"));
     }
 
-    public Boolean createUser(UserCreateDto userCreateDto) {
-        Users user = new Users();
-        user.setName(userCreateDto.getName());
-        user.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        Users savedUser = userRepository.save(user);
-        return getUserById(savedUser.getId()).isPresent();
-    }
-
     public Boolean updateUser(UserUpdateDto userUpdateDto) {
         Optional<Users> userOptional = userRepository.findById(userUpdateDto.getId());
         if (userOptional.isPresent()) {
@@ -88,68 +79,31 @@ public class UserService {
         return false;
     }
 
-    public Boolean assignUService(AssignDto assignDto) {
-        Optional<UService> uServiceOptional = uServiceRepository.findById(assignDto.getService_id());
-        Optional<Users> usersOptional = userRepository.findById(assignDto.getUser_id());
+    public Boolean assignServiceToCurrentUser(String username, Long serviceId, Long timeId) {
 
-        if (usersOptional.isPresent() && uServiceOptional.isPresent()) {
-            Users user = usersOptional.get();
-            UService uService = uServiceOptional.get();
+        Optional<Security> security = securityRepository.findByLogin(username);
+        if (security.isEmpty()) {
+            return false;
+        }
+        Optional<Users> userOptional = userRepository.findById(security.get().getUserId());
+        Optional<DateTimeModel> dateTimeOptional = dateTimeRepository.findById(timeId);
 
-            user.addUService(uService);
+        if (userOptional.isPresent() && dateTimeOptional.isPresent()) {
+            DateTimeModel dateTime = dateTimeOptional.get();
+
+            if (!dateTime.getUService().getId().equals(serviceId)) {
+                return false;
+            }
+
+            Users user = userOptional.get();
+            dateTime.setUser(user);
+            user.getAssignedTimes().add(dateTime);
+            user.getUServices().add(dateTime.getUService());
 
             userRepository.save(user);
             return true;
-        } else {
-            return false;
         }
-    }
-
-    public Boolean unAssignUService(AssignDto assignDto) {
-        Optional<UService> uServiceOptional = uServiceRepository.findById(assignDto.getService_id());
-        Optional<Users> usersOptional = userRepository.findById(assignDto.getUser_id());
-
-        if (usersOptional.isPresent() && uServiceOptional.isPresent()) {
-            Users user = usersOptional.get();
-            UService uService = uServiceOptional.get();
-
-            user.removeUService(uService);
-
-            userRepository.save(user);
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    public Boolean assignServiceToCurrentUser(Long serviceId) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-
-        Optional<Users> userOptional = userRepository.findByName(username);
-        if (userOptional.isEmpty()) {
-            return false;
-        }
-
-        Optional<UService> uServiceOptional = uServiceRepository.findById(serviceId);
-        if (uServiceOptional.isEmpty()) {
-            return false;
-        }
-
-        Users user = userOptional.get();
-        UService uService = uServiceOptional.get();
-
-        user.addUService(uService);
-
-        userRepository.save(user);
-        return true;
+        return false;
     }
 
     public Collection<UService> getServicesByUserId(Long userId) {
