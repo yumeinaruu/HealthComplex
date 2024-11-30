@@ -170,6 +170,22 @@ public class UserService {
         return false;
     }
 
+    public Boolean acceptPayment(Long userId, Long timeId) {
+        Optional<DateTimeModel> dateTimeOptional = dateTimeRepository.findById(timeId);
+
+        if (dateTimeOptional.isPresent()) {
+            DateTimeModel dateTime = dateTimeOptional.get();
+
+            if (!dateTime.getUser().getId().equals(userId)) {
+                return false;
+            }
+            dateTime.setPaid(Boolean.TRUE);
+            dateTimeRepository.save(dateTime);
+            return true;
+        }
+        return false;
+    }
+
     public Boolean deleteUserById(Long id) {
         Optional<Users> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {

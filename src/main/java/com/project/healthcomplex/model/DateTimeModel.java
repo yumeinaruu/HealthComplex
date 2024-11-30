@@ -19,6 +19,9 @@ public class DateTimeModel {
     @Temporal(TemporalType.TIMESTAMP)
     private Timestamp start;
 
+    @Column(name = "paid", nullable = false)
+    private Boolean paid = Boolean.FALSE;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "u_service_id", nullable = false)

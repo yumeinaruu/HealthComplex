@@ -156,6 +156,19 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to assign service and time to user");
     }
 
+    @PostMapping("/{userId}/payment")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CASHIER')")
+    @Operation(summary = "Одобрение покупки")
+    public ResponseEntity<String> acceptPayment(
+            @PathVariable Long userId,
+            @RequestParam Long timeId
+    ) {
+        if (userService.acceptPayment(userId, timeId)) {
+            return ResponseEntity.ok("Payment accepted successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to accept payment");
+    }
+
     @DeleteMapping("/{userId}/unassign")
     @PreAuthorize("hasAnyRole('ADMIN', 'COACH', 'CASHIER')")
     @Operation(summary = "Отписать пользователя от услуги")
