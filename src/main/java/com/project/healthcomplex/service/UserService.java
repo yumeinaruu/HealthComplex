@@ -167,7 +167,11 @@ public class UserService {
         if (userOptional.isEmpty()) {
             return false;
         }
-        userRepository.delete(userOptional.get());
+        Users user = userOptional.get();
+
+        user.getUServices().forEach(service -> service.getUsers().remove(user));
+        user.getUServices().clear();
+        userRepository.delete(user);
         return true;
     }
 }

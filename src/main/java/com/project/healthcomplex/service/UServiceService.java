@@ -71,7 +71,14 @@ public class UServiceService {
         if (uServiceOptional.isEmpty()) {
             return false;
         }
-        uServiceRepository.delete(uServiceOptional.get());
+        UService uService = uServiceOptional.get();
+
+        // Удаляем связи с пользователями
+        uService.getUsers().forEach(user -> user.getUServices().remove(uService));
+        uService.getUsers().clear();
+
+        // Удаляем сам сервис
+        uServiceRepository.delete(uService);
         return true;
     }
 }
