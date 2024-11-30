@@ -42,7 +42,7 @@ public class SecurityController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/registration/admin")
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
     public ResponseEntity<HttpStatus> registrationForAdmin(@RequestBody @Valid RegistrationDto registrationDto,
@@ -54,7 +54,7 @@ public class SecurityController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/registration/cashier")
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
     public ResponseEntity<HttpStatus> registrationForCashier(@RequestBody @Valid RegistrationDto registrationDto,
@@ -66,7 +66,7 @@ public class SecurityController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/registration/coach")
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Admin can register a user(so random people could not be added to this company api)")
     public ResponseEntity<HttpStatus> registrationForCoach(@RequestBody @Valid RegistrationDto registrationDto,
