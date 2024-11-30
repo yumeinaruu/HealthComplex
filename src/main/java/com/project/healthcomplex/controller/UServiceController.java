@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@Tag(name = "Work with service")
+@Tag(name = "Услуги")
 @SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping("/service")
 public class UServiceController {

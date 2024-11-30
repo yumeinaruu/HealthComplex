@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@Tag(name = "Work with security")
+@Tag(name = "Безопасность")
 @RequestMapping("/security")
 @SecurityRequirement(name = "Bearer Authentication")
 public class SecurityController {
@@ -32,7 +32,7 @@ public class SecurityController {
 
     @PostMapping("/registration")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @Operation(summary = "Регистация пользователя")
+    @Operation(summary = "Регистрация пользователя")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid RegistrationDto registrationDto,
                                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -44,7 +44,7 @@ public class SecurityController {
 
     @PostMapping("/registration/admin")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Регистация админа")
+    @Operation(summary = "Регистрация админа")
     public ResponseEntity<HttpStatus> registrationForAdmin(@RequestBody @Valid RegistrationDto registrationDto,
                                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -56,7 +56,7 @@ public class SecurityController {
 
     @PostMapping("/registration/cashier")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Регистация кассира")
+    @Operation(summary = "Регистрация кассира")
     public ResponseEntity<HttpStatus> registrationForCashier(@RequestBody @Valid RegistrationDto registrationDto,
                                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -68,7 +68,7 @@ public class SecurityController {
 
     @PostMapping("/registration/coach")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "Регистация тренера")
+    @Operation(summary = "Регистрация тренера")
     public ResponseEntity<HttpStatus> registrationForCoach(@RequestBody @Valid RegistrationDto registrationDto,
                                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
