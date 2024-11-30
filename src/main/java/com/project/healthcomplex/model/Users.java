@@ -25,4 +25,11 @@ public class Users {
     @Column(name = "changed")
     @Temporal(TemporalType.TIMESTAMP)
     private Timestamp changed;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_service",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
+    private Collection<UService> uServices;
 }
